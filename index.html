@@ -3,120 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Techno Generator</title>
+  <title>SUPER JX-8</title>
   <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
   <div class="app">
-
-    <!-- ── Header ──────────────────────────────────────────────────────── -->
     <header>
-      <h1>🎛️ Techno Generator</h1>
-      <p class="subtitle">Parametric Electronic Music Synthesizer &amp; Step Sequencer</p>
+      <nav class="lab-nav">
+        <a href="index.html" class="lab-nav-link active">SUPER JX-8</a>
+        <a href="drum-lab.html" class="lab-nav-link">Drum Lab</a>
+      </nav>
+      <h1>SUPER JX-8</h1>
+      <p class="subtitle">8-voice polyphonic supersaw &mdash; seven detuned oscillators per voice, controllable spread and mix law.</p>
     </header>
 
-    <!-- ── Transport ───────────────────────────────────────────────────── -->
-    <div class="transport">
-      <button id="startStop">▶  START</button>
-      <div class="bpm-control">
-        <label>BPM</label>
-        <input type="range" id="bpm" min="100" max="180" value="135" step="1">
-        <span id="bpmDisplay">135</span>
-      </div>
-    </div>
-
-    <!-- ── Step Sequencer grid ─────────────────────────────────────────── -->
-    <section class="sequencer">
-      <div class="sequencer-title">Step Sequencer — click steps to toggle</div>
-
-      <div class="track">
-        <div class="track-label">Kick</div>
-        <div class="steps" id="kickSteps"></div>
-      </div>
-      <div class="track">
-        <div class="track-label">Snare</div>
-        <div class="steps" id="snareSteps"></div>
-      </div>
-      <div class="track">
-        <div class="track-label">Hi-Hat</div>
-        <div class="steps" id="hihatSteps"></div>
-      </div>
-      <div class="track">
-        <div class="track-label">Open HH</div>
-        <div class="steps" id="openHihatSteps"></div>
-      </div>
-      <div class="track">
-        <div class="track-label">Clap</div>
-        <div class="steps" id="clapSteps"></div>
+    <section class="transport">
+      <button id="startStop">PLAY</button>
+      <div class="transport-copy">
+        <strong>JP-style concept:</strong>
+        one saw at pitch, three detuned pairs around it, and a mix control that can move from equal-average to center-led or outer-led.
       </div>
     </section>
 
-    <!-- ── Synth control panels ────────────────────────────────────────── -->
-    <div class="synth-panels">
-
-      <!-- Bass Synth (TB-303 acid style) -->
-      <div class="panel">
-        <h2>Bass Synth — Acid</h2>
-
-        <div class="control-row">
-          <label>Filter Cutoff</label>
-          <input type="range" id="bassFilter" min="100" max="5000" value="800" step="10">
-          <span class="value" id="bassFilterDisplay">800 Hz</span>
+    <section class="panel">
+      <h2>Source</h2>
+      <div class="choice-section">
+        <div>
+          <div class="section-label">Root</div>
+          <div class="choice-grid" id="rootButtons"></div>
         </div>
-        <div class="control-row">
-          <label>Resonance (Q)</label>
-          <input type="range" id="bassResonance" min="0.5" max="30" value="8" step="0.5">
-          <span class="value" id="bassResonanceDisplay">8.0</span>
-        </div>
-        <div class="control-row">
-          <label>Env Mod</label>
-          <input type="range" id="bassEnvMod" min="0" max="5000" value="2000" step="50">
-          <span class="value" id="bassEnvModDisplay">2000</span>
+        <div>
+          <div class="section-label">Voicing</div>
+          <div class="choice-grid" id="voicingButtons"></div>
         </div>
       </div>
+      <div class="readout">
+        <span class="section-label">Active Notes</span>
+        <div id="chordReadout"></div>
+      </div>
+    </section>
 
-      <!-- Super Saw Synth (rave chords) -->
-      <div class="panel">
-        <h2>Super Saw — Rave Chords</h2>
+    <div class="synth-panels">
+      <section class="panel">
+        <h2>Voice Controls</h2>
 
         <div class="control-row">
           <label>Filter Cutoff</label>
-          <input type="range" id="sawFilter" min="200" max="10000" value="2000" step="10">
-          <span class="value" id="sawFilterDisplay">2000 Hz</span>
+          <input type="range" id="filterCutoff" min="180" max="10000" value="2800" step="10">
+          <span class="value" id="filterCutoffDisplay"></span>
         </div>
         <div class="control-row">
-          <label>Resonance (Q)</label>
-          <input type="range" id="sawResonance" min="0.5" max="20" value="5" step="0.5">
-          <span class="value" id="sawResonanceDisplay">5.0</span>
+          <label>Resonance</label>
+          <input type="range" id="filterResonance" min="0.5" max="18" value="4" step="0.1">
+          <span class="value" id="filterResonanceDisplay"></span>
         </div>
         <div class="control-row">
-          <label>LFO Speed</label>
-          <input type="range" id="sawLFO" min="0.02" max="2" value="0.25" step="0.01">
-          <span class="value" id="sawLFODisplay">0.25 Hz</span>
+          <label>LFO Rate</label>
+          <input type="range" id="lfoRate" min="0" max="1.2" value="0.12" step="0.01">
+          <span class="value" id="lfoRateDisplay"></span>
         </div>
         <div class="control-row">
           <label>LFO Depth</label>
-          <input type="range" id="sawLFODepth" min="0" max="5000" value="1500" step="50">
-          <span class="value" id="sawLFODepthDisplay">1500</span>
+          <input type="range" id="lfoDepth" min="0" max="4000" value="900" step="20">
+          <span class="value" id="lfoDepthDisplay"></span>
         </div>
         <div class="control-row">
-          <label>Detune Spread</label>
-          <input type="range" id="sawDetune" min="1" max="50" value="12" step="1">
-          <span class="value" id="sawDetuneDisplay">12 ct</span>
+          <label>Detune</label>
+          <input type="range" id="detuneAmount" min="0" max="42" value="18" step="0.1">
+          <span class="value" id="detuneAmountDisplay"></span>
         </div>
-      </div>
+        <div class="control-row">
+          <label>Mix Bias</label>
+          <input type="range" id="mixBias" min="-1" max="1" value="0" step="0.01">
+          <span class="value" id="mixBiasDisplay"></span>
+        </div>
+        <div class="control-row">
+          <label>Output</label>
+          <input type="range" id="outputLevel" min="0.15" max="1" value="0.75" step="0.01">
+          <span class="value" id="outputLevelDisplay"></span>
+        </div>
+        <div class="control-row">
+          <label>Attack</label>
+          <input type="range" id="attack" min="0.01" max="1.2" value="0.09" step="0.01">
+          <span class="value" id="attackDisplay"></span>
+        </div>
+        <div class="control-row">
+          <label>Release</label>
+          <input type="range" id="release" min="0.05" max="3" value="0.9" step="0.01">
+          <span class="value" id="releaseDisplay"></span>
+        </div>
+      </section>
 
+      <section class="panel">
+        <h2>Oscillator Distribution</h2>
+        <p class="panel-copy">Public descriptions of the Roland JP family consistently describe a 7-saw layout: one center oscillator plus three detuned pairs. The exact internal gain law is not publicly documented, so this instrument exposes the weighting directly.</p>
+        <div class="distribution-plot" id="oscillatorPlot"></div>
+        <p class="distribution-note" id="distributionNote"></p>
+      </section>
     </div>
 
-    <!-- ── Chord progression display ───────────────────────────────────── -->
-    <div class="chord-section">
-      <h2>Chord Progression — Am › Gm › Fm › Em</h2>
-      <div class="chord-indicators" id="chordIndicators"></div>
-    </div>
-
-    <p class="hint">Web Audio API · ES Modules · No dependencies</p>
-
-  </div><!-- /.app -->
+    <p class="hint">Web Audio API · sustained supersaw · <a href="drum-lab.html" style="color:var(--accent);text-decoration:none">→ Drum Lab</a></p>
+  </div>
 
   <script type="module" src="src/app.js"></script>
 </body>

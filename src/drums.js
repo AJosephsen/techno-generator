@@ -1,43 +1,119 @@
 /**
- * drums.js — Electronic drum synthesizers for techno music
+ * drums.js — Electronic drum synthesizers for techno / drum n bass
  *
  * Each drum class takes an AudioContext and an optional output AudioNode.
  * All synths are created fresh per-trigger so they're garbage-collected after
  * the note ends. No persistent oscillator state is kept per instance.
  */
 
-const KICK_DISTORTION_AMOUNT = 30;
-
 export class KickDrum {
   /**
+   * 808-style deep bass kick.
    * @param {AudioContext} audioCtx
-   * @param {AudioNode} output  Destination node (default: audioCtx.destination)
+   * @param {AudioNode}    output   Destination node (default: audioCtx.destination)
    */
   constructor(audioCtx, output = null) {
     this.ctx = audioCtx;
     this.output = output || audioCtx.destination;
+
+    // Voice parameters — tweak externally to reshape the sound
+    this.tune  = 40;   // Hz  — sustained bass tone frequency
+    this.decay = 0.59; // s   — amplitude envelope length
+    this.punch = 3.55; // ×   — start freq = tune × punch  (pitch sweep range)
+    this.click = 0.6;  // 0–1 — level of the transient click attack
   }
 
   trigger(time, velocity = 1) {
+    const v = Math.min(velocity, 1);
+
+    // --- Transient click (stick-on-skin definition) ---
+    if (this.click > 0) {
+      const src = this.ctx.createBufferSource();
+      src.buffer = createNoiseBuffer(this.ctx, 0.015);
+
+      const f = this.ctx.createBiquadFilter();
+      f.type = 'bandpass';
+      f.frequency.value = 220;
+      f.Q.value = 1.8;
+
+      const g = this.ctx.createGain();
+      g.gain.setValueAtTime(v * this.click * 1.1, time);
+      g.gain.exponentialRampToValueAtTime(0.001, time + 0.012);
+
+      src.connect(f); f.connect(g); g.connect(this.output);
+      src.start(time); src.stop(time + 0.02);
+    }
+
+    // --- High-frequency noise snap (adds upper overtones / attack definition) ---
+    {
+      // Layer 1: mid-punch — fills the 600–2 kHz "body crack" range
+      const midSrc = this.ctx.createBufferSource();
+      midSrc.buffer = createNoiseBuffer(this.ctx, 0.04);
+
+      const midHp = this.ctx.createBiquadFilter();
+      midHp.type = 'highpass';
+      midHp.frequency.value = 500;
+      midHp.Q.value = 0.6;
+
+      const midBp = this.ctx.createBiquadFilter();
+      midBp.type = 'peaking';
+      midBp.frequency.value = 1100;
+      midBp.gain.value = 6;
+      midBp.Q.value = 1.2;
+
+      const midGain = this.ctx.createGain();
+      midGain.gain.setValueAtTime(v * this.click * 0.55, time);
+      midGain.gain.exponentialRampToValueAtTime(0.001, time + 0.028);
+
+      midSrc.connect(midHp); midHp.connect(midBp); midBp.connect(midGain);
+      midGain.connect(this.output);
+      midSrc.start(time); midSrc.stop(time + 0.045);
+
+      // Layer 2: air — short 4–8 kHz shimmer for presence on laptop speakers / headphones
+      const airSrc = this.ctx.createBufferSource();
+      airSrc.buffer = createNoiseBuffer(this.ctx, 0.022);
+
+      const airHp = this.ctx.createBiquadFilter();
+      airHp.type = 'highpass';
+      airHp.frequency.value = 4000;
+      airHp.Q.value = 0.7;
+
+      const airGain = this.ctx.createGain();
+      airGain.gain.setValueAtTime(v * this.click * 0.22, time);
+      airGain.gain.exponentialRampToValueAtTime(0.001, time + 0.016);
+
+      airSrc.connect(airHp); airHp.connect(airGain);
+      airGain.connect(this.output);
+      airSrc.start(time); airSrc.stop(time + 0.025);
+    }
+
+    // --- Deep sub-bass sine body ---
     const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+
+    // Soft waveshaper adds warmth without harsh clipping
+    const waveshaper = this.ctx.createWaveShaper();
+    waveshaper.curve = makeDistortionCurve(8);
+
     const gainNode = this.ctx.createGain();
-    const distortion = this.ctx.createWaveShaper();
-    distortion.curve = makeDistortionCurve(KICK_DISTORTION_AMOUNT);
 
-    osc.connect(gainNode);
-    gainNode.connect(distortion);
-    distortion.connect(this.output);
+    // Cap start freq so extreme punch values stay musical
+    const startFreq    = Math.min(this.tune * this.punch, 600);
+    const sweepDur     = 0.065 + (this.punch - 1) * 0.015;
 
-    // Pitch envelope: fast drop from ~180 Hz to ~40 Hz (the "thud")
-    osc.frequency.setValueAtTime(180 * Math.min(velocity, 1.0), time);
-    osc.frequency.exponentialRampToValueAtTime(40, time + 0.08);
+    osc.frequency.setValueAtTime(startFreq, time);
+    osc.frequency.exponentialRampToValueAtTime(this.tune, time + sweepDur);
 
-    // Amplitude envelope
-    gainNode.gain.setValueAtTime(velocity, time);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.45);
+    gainNode.gain.setValueAtTime(0, time);
+    gainNode.gain.linearRampToValueAtTime(v, time + 0.002);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, time + this.decay);
+
+    osc.connect(waveshaper);
+    waveshaper.connect(gainNode);
+    gainNode.connect(this.output);
 
     osc.start(time);
-    osc.stop(time + 0.5);
+    osc.stop(time + this.decay + 0.05);
   }
 }
 
@@ -150,6 +226,56 @@ export class Clap {
       noise.start(t);
       noise.stop(t + 0.12);
     });
+  }
+}
+
+export class RimShot {
+  /**
+   * Short ghost-note / rim hit — used for ghost snare layers in DnB grooves.
+   * @param {AudioContext} audioCtx
+   * @param {AudioNode}    output
+   */
+  constructor(audioCtx, output = null) {
+    this.ctx = audioCtx;
+    this.output = output || audioCtx.destination;
+  }
+
+  trigger(time, velocity = 1) {
+    const v = Math.min(velocity, 1);
+
+    // Tonal body — tuned click of stick on rim
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(340, time);
+    osc.frequency.exponentialRampToValueAtTime(190, time + 0.022);
+
+    const oscGain = this.ctx.createGain();
+    oscGain.gain.setValueAtTime(v * 0.38, time);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+
+    osc.connect(oscGain);
+    oscGain.connect(this.output);
+    osc.start(time);
+    osc.stop(time + 0.05);
+
+    // Tight noise burst
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = createNoiseBuffer(this.ctx, 0.045);
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 3800;
+    filter.Q.value = 2.5;
+
+    const noiseGain = this.ctx.createGain();
+    noiseGain.gain.setValueAtTime(v * 0.28, time);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.028);
+
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(this.output);
+    noise.start(time);
+    noise.stop(time + 0.05);
   }
 }
 

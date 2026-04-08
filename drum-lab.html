@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drum Lab</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <nav class="lab-nav">
+        <a href="index.html" class="lab-nav-link">SUPER JX-8</a>
+        <a href="drum-lab.html" class="lab-nav-link active">Drum Lab</a>
+      </nav>
+      <h1>Drum Lab</h1>
+      <p class="subtitle">808-style deep kick · six-track breakbeat engine · drum n bass patterns</p>
+    </header>
+
+    <section class="transport">
+      <button id="startStop">PLAY</button>
+      <div class="transport-controls">
+        <div class="control-row">
+          <label>BPM</label>
+          <input type="range" id="bpm" min="140" max="200" value="174" step="1">
+          <span class="value" id="bpmDisplay">174</span>
+        </div>
+        <div class="transport-copy">
+          <strong>Click</strong> a step to toggle · <strong>Right-click</strong> for ghost velocity · pick a preset or draw your own pattern
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="preset-bar">
+        <span class="section-label">Pattern Preset</span>
+        <div class="choice-grid" id="presetButtons"></div>
+      </div>
+    </section>
+
+    <section class="panel drum-lab-panel">
+      <h2>Sequencer</h2>
+      <div id="drumGrid"></div>
+    </section>
+
+    <div class="drum-detail-panels">
+      <section class="panel">
+        <h2>Kick Voice</h2>
+        <div class="control-row">
+          <label>Tune</label>
+          <input type="range" id="kickTune" min="25" max="100" value="40" step="1">
+          <span class="value" id="kickTuneDisplay">55 Hz</span>
+        </div>
+        <div class="control-row">
+          <label>Decay</label>
+          <input type="range" id="kickDecay" min="0.2" max="1.5" value="0.59" step="0.01">
+          <span class="value" id="kickDecayDisplay">0.65 s</span>
+        </div>
+        <div class="control-row">
+          <label>Punch</label>
+          <input type="range" id="kickPunch" min="1.2" max="6" value="3.55" step="0.05">
+          <span class="value" id="kickPunchDisplay">2.8×</span>
+        </div>
+        <div class="control-row">
+          <label>Click</label>
+          <input type="range" id="kickClick" min="0" max="1" value="0.6" step="0.01">
+          <span class="value" id="kickClickDisplay">60%</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Channel Mix</h2>
+        <div id="mixPanel"></div>
+      </section>
+    </div>
+
+    <p class="hint">Web Audio API · 808 deep kick · DnB step sequencer</p>
+  </div>
+
+  <script type="module" src="src/drum-lab.js"></script>
+</body>
+</html>
