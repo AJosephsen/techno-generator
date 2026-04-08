@@ -1,0 +1,11 @@
+{
+  "name": "techno-generator",
+  "version": "1.0.0",
+  "description": "Parametric techno electronica rave generator synth — Web Audio API",
+  "scripts": {
+    "start": "npx serve . -p 3000 --no-clipboard",
+    "dev":   "npx live-server --port=3000 --no-browser=false"
+  },
+  "keywords": ["techno", "synthesizer", "web-audio", "step-sequencer", "rave"],
+  "license": "MIT"
+}

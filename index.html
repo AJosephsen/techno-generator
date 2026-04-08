@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Techno Generator</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ── Header ──────────────────────────────────────────────────────── -->
+    <header>
+      <h1>🎛️ Techno Generator</h1>
+      <p class="subtitle">Parametric Electronic Music Synthesizer &amp; Step Sequencer</p>
+    </header>
+
+    <!-- ── Transport ───────────────────────────────────────────────────── -->
+    <div class="transport">
+      <button id="startStop">▶  START</button>
+      <div class="bpm-control">
+        <label>BPM</label>
+        <input type="range" id="bpm" min="100" max="180" value="135" step="1">
+        <span id="bpmDisplay">135</span>
+      </div>
+    </div>
+
+    <!-- ── Step Sequencer grid ─────────────────────────────────────────── -->
+    <section class="sequencer">
+      <div class="sequencer-title">Step Sequencer — click steps to toggle</div>
+
+      <div class="track">
+        <div class="track-label">Kick</div>
+        <div class="steps" id="kickSteps"></div>
+      </div>
+      <div class="track">
+        <div class="track-label">Snare</div>
+        <div class="steps" id="snareSteps"></div>
+      </div>
+      <div class="track">
+        <div class="track-label">Hi-Hat</div>
+        <div class="steps" id="hihatSteps"></div>
+      </div>
+      <div class="track">
+        <div class="track-label">Open HH</div>
+        <div class="steps" id="openHihatSteps"></div>
+      </div>
+      <div class="track">
+        <div class="track-label">Clap</div>
+        <div class="steps" id="clapSteps"></div>
+      </div>
+    </section>
+
+    <!-- ── Synth control panels ────────────────────────────────────────── -->
+    <div class="synth-panels">
+
+      <!-- Bass Synth (TB-303 acid style) -->
+      <div class="panel">
+        <h2>Bass Synth — Acid</h2>
+
+        <div class="control-row">
+          <label>Filter Cutoff</label>
+          <input type="range" id="bassFilter" min="100" max="5000" value="800" step="10">
+          <span class="value" id="bassFilterDisplay">800 Hz</span>
+        </div>
+        <div class="control-row">
+          <label>Resonance (Q)</label>
+          <input type="range" id="bassResonance" min="0.5" max="30" value="8" step="0.5">
+          <span class="value" id="bassResonanceDisplay">8.0</span>
+        </div>
+        <div class="control-row">
+          <label>Env Mod</label>
+          <input type="range" id="bassEnvMod" min="0" max="5000" value="2000" step="50">
+          <span class="value" id="bassEnvModDisplay">2000</span>
+        </div>
+      </div>
+
+      <!-- Super Saw Synth (rave chords) -->
+      <div class="panel">
+        <h2>Super Saw — Rave Chords</h2>
+
+        <div class="control-row">
+          <label>Filter Cutoff</label>
+          <input type="range" id="sawFilter" min="200" max="10000" value="2000" step="10">
+          <span class="value" id="sawFilterDisplay">2000 Hz</span>
+        </div>
+        <div class="control-row">
+          <label>Resonance (Q)</label>
+          <input type="range" id="sawResonance" min="0.5" max="20" value="5" step="0.5">
+          <span class="value" id="sawResonanceDisplay">5.0</span>
+        </div>
+        <div class="control-row">
+          <label>LFO Speed</label>
+          <input type="range" id="sawLFO" min="0.02" max="2" value="0.25" step="0.01">
+          <span class="value" id="sawLFODisplay">0.25 Hz</span>
+        </div>
+        <div class="control-row">
+          <label>LFO Depth</label>
+          <input type="range" id="sawLFODepth" min="0" max="5000" value="1500" step="50">
+          <span class="value" id="sawLFODepthDisplay">1500</span>
+        </div>
+        <div class="control-row">
+          <label>Detune Spread</label>
+          <input type="range" id="sawDetune" min="1" max="50" value="12" step="1">
+          <span class="value" id="sawDetuneDisplay">12 ct</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Chord progression display ───────────────────────────────────── -->
+    <div class="chord-section">
+      <h2>Chord Progression — Am › Gm › Fm › Em</h2>
+      <div class="chord-indicators" id="chordIndicators"></div>
+    </div>
+
+    <p class="hint">Web Audio API · ES Modules · No dependencies</p>
+
+  </div><!-- /.app -->
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

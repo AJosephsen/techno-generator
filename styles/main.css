@@ -1,0 +1,314 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Techno Generator — main.css
+   Dark industrial aesthetic with green/cyan/red accent palette
+───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --bg:          #08080d;
+  --surface:     #10101a;
+  --surface2:    #181828;
+  --border:      #1e1e35;
+  --accent:      #00ff88;  /* green — on / start */
+  --accent-stop: #ff2255;  /* red   — stop / active */
+  --accent-blue: #00b4ff;  /* blue  — info / playing */
+  --text:        #d8d8f0;
+  --text-dim:    #555580;
+  --step-off:    #16162a;
+  --step-on:     #00ff88;
+  --step-play:   #00b4ff;
+  --step-hit:    #ff2255;
+  --font:        'Courier New', 'Lucida Console', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  min-height: 100vh;
+  padding: 20px 16px 40px;
+}
+
+/* ── Layout wrapper ──────────────────────────────────────────────────────── */
+.app {
+  max-width: 940px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+header {
+  text-align: center;
+  padding: 22px 0 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  color: var(--accent);
+  text-shadow: 0 0 24px rgba(0,255,136,.45);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  color: var(--text-dim);
+  font-size: .72rem;
+  letter-spacing: .12em;
+  margin-top: 6px;
+}
+
+/* ── Transport bar ───────────────────────────────────────────────────────── */
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+#startStop {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 12px 32px;
+  font-family: var(--font);
+  font-size: .9rem;
+  font-weight: bold;
+  letter-spacing: .12em;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+#startStop:hover {
+  box-shadow: 0 0 22px rgba(0,255,136,.5);
+}
+
+#startStop.playing {
+  background: var(--accent-stop);
+  box-shadow: 0 0 22px rgba(255,34,85,.5);
+}
+
+.bpm-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.bpm-control label {
+  font-size: .7rem;
+  color: var(--text-dim);
+  letter-spacing: .1em;
+  white-space: nowrap;
+}
+
+.bpm-control input[type="range"] {
+  flex: 1;
+  min-width: 80px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+#bpmDisplay {
+  color: var(--accent);
+  font-size: 1.3rem;
+  min-width: 44px;
+  text-align: right;
+}
+
+/* ── Sequencer grid ──────────────────────────────────────────────────────── */
+.sequencer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sequencer-title {
+  font-size: .72rem;
+  color: var(--text-dim);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.track-label {
+  width: 72px;
+  font-size: .65rem;
+  letter-spacing: .08em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 3px;
+  flex: 1;
+}
+
+.step {
+  aspect-ratio: 1 / 0.7;
+  background: var(--step-off);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background .05s, box-shadow .05s;
+  /* Beat markers: faint border every 4 steps */
+}
+
+/* Emphasise beat groups visually */
+.step:nth-child(4n+1) { border-left: 2px solid #252540; }
+
+.step.active {
+  background: var(--step-on);
+  border-color: rgba(0,255,136,.4);
+}
+
+.step.playing {
+  border-color: var(--step-play);
+  box-shadow: 0 0 8px rgba(0,180,255,.55);
+}
+
+.step.active.playing {
+  background: var(--step-hit);
+  border-color: var(--step-hit);
+  box-shadow: 0 0 14px rgba(255,34,85,.8);
+}
+
+/* ── Synth panels ────────────────────────────────────────────────────────── */
+.synth-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 580px) {
+  .synth-panels { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.panel h2 {
+  font-size: .72rem;
+  letter-spacing: .15em;
+  color: var(--accent-blue);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-row label {
+  width: 98px;
+  font-size: .65rem;
+  color: var(--text-dim);
+  letter-spacing: .07em;
+  flex-shrink: 0;
+}
+
+.control-row input[type="range"] {
+  flex: 1;
+  min-width: 60px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.control-row .value {
+  width: 68px;
+  font-size: .7rem;
+  color: var(--accent);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ── Chord display ───────────────────────────────────────────────────────── */
+.chord-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+
+.chord-section h2 {
+  font-size: .72rem;
+  letter-spacing: .15em;
+  color: var(--accent-blue);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.chord-indicators {
+  display: flex;
+  gap: 10px;
+}
+
+.chord-indicator {
+  flex: 1;
+  padding: 14px 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-align: center;
+  transition: background .1s, border-color .1s, box-shadow .1s;
+}
+
+.chord-indicator.current {
+  border-color: var(--accent);
+  background: rgba(0,255,136,.08);
+  box-shadow: 0 0 16px rgba(0,255,136,.25);
+}
+
+.chord-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--accent);
+  letter-spacing: .06em;
+}
+
+.chord-notes {
+  font-size: .6rem;
+  color: var(--text-dim);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
+/* ── Footer hint ─────────────────────────────────────────────────────────── */
+.hint {
+  text-align: center;
+  font-size: .62rem;
+  color: var(--text-dim);
+  letter-spacing: .08em;
+  padding-top: 4px;
+}
