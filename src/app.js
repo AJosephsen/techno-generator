@@ -185,17 +185,25 @@ function initUI() {
   });
 
   // Bass synth sliders
-  bindSlider('bassFilter',    'bassFilterDisplay',    v => { if (bassSynth) bassSynth.setFilter(v, bassSynth.resonance);      return `${v} Hz`; });
-  bindSlider('bassResonance', 'bassResonanceDisplay', v => { if (bassSynth) bassSynth.setFilter(bassSynth.filterCutoff, v);   return v.toFixed(1); });
-  bindSlider('bassEnvMod',    'bassEnvModDisplay',    v => { if (bassSynth) bassSynth.setEnvMod(v);                           return String(Math.round(v)); });
+  bindSlider('bassFilter',    'bassFilterDisplay',    v => { if (bassSynth) bassSynth.setFilter(v, bassSynth.resonance);      return fmtHz(v); });
+  bindSlider('bassResonance', 'bassResonanceDisplay', v => { if (bassSynth) bassSynth.setFilter(bassSynth.filterCutoff, v);   return fmtQ(v); });
+  bindSlider('bassEnvMod',    'bassEnvModDisplay',    v => { if (bassSynth) bassSynth.setEnvMod(v);                           return fmtInt(v); });
 
   // Super saw sliders
-  bindSlider('sawFilter',    'sawFilterDisplay',    v => { if (superSaw) superSaw.setFilter(v, superSaw.resonance);           return `${v} Hz`; });
-  bindSlider('sawResonance', 'sawResonanceDisplay', v => { if (superSaw) superSaw.setFilter(superSaw.filterCutoff, v);        return v.toFixed(1); });
-  bindSlider('sawLFO',       'sawLFODisplay',       v => { if (superSaw) superSaw.setLFO(v, superSaw.lfoDepth);               return `${v.toFixed(2)} Hz`; });
-  bindSlider('sawLFODepth',  'sawLFODepthDisplay',  v => { if (superSaw) superSaw.setLFO(superSaw.lfoRate, v);                return String(Math.round(v)); });
-  bindSlider('sawDetune',    'sawDetuneDisplay',    v => { if (superSaw) superSaw.setDetune(v);                               return `${Math.round(v)} ct`; });
+  bindSlider('sawFilter',    'sawFilterDisplay',    v => { if (superSaw) superSaw.setFilter(v, superSaw.resonance);           return fmtHz(v); });
+  bindSlider('sawResonance', 'sawResonanceDisplay', v => { if (superSaw) superSaw.setFilter(superSaw.filterCutoff, v);        return fmtQ(v); });
+  bindSlider('sawLFO',       'sawLFODisplay',       v => { if (superSaw) superSaw.setLFO(v, superSaw.lfoDepth);               return fmtLFOHz(v); });
+  bindSlider('sawLFODepth',  'sawLFODepthDisplay',  v => { if (superSaw) superSaw.setLFO(superSaw.lfoRate, v);                return fmtInt(v); });
+  bindSlider('sawDetune',    'sawDetuneDisplay',    v => { if (superSaw) superSaw.setDetune(v);                               return fmtCents(v); });
 }
+
+// ─── Display formatters ────────────────────────────────────────────────────────
+
+const fmtHz     = v => `${Math.round(v)} Hz`;
+const fmtQ      = v => v.toFixed(1);
+const fmtInt    = v => String(Math.round(v));
+const fmtLFOHz  = v => `${v.toFixed(2)} Hz`;
+const fmtCents  = v => `${Math.round(v)} ct`;
 
 /** Wire a range input to a display span and an onChange handler. */
 function bindSlider(sliderId, displayId, onChange) {

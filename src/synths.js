@@ -5,6 +5,8 @@
  * SuperSawSynth — 7 detuned sawtooth oscillators + resonant filter + LFO sweep
  */
 
+const ACCENT_FILTER_MULTIPLIER = 1.2;
+
 export class BassSynth {
   /**
    * @param {AudioContext} audioCtx
@@ -68,7 +70,7 @@ export class BassSynth {
     ampEnv.gain.linearRampToValueAtTime(0, time + duration);
 
     // Filter envelope: opens up from the top then decays to base cutoff
-    const envPeak = this.filterCutoff + this.envMod * (accent ? 1.2 : 1.0);
+    const envPeak = this.filterCutoff + this.envMod * (accent ? ACCENT_FILTER_MULTIPLIER : 1.0);
     this.filter.frequency.cancelAndHoldAtTime(time);
     this.filter.frequency.setValueAtTime(Math.min(envPeak, 18000), time);
     this.filter.frequency.exponentialRampToValueAtTime(

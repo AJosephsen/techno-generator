@@ -6,6 +6,8 @@
  * the note ends. No persistent oscillator state is kept per instance.
  */
 
+const KICK_DISTORTION_AMOUNT = 30;
+
 export class KickDrum {
   /**
    * @param {AudioContext} audioCtx
@@ -20,7 +22,7 @@ export class KickDrum {
     const osc = this.ctx.createOscillator();
     const gainNode = this.ctx.createGain();
     const distortion = this.ctx.createWaveShaper();
-    distortion.curve = makeDistortionCurve(30);
+    distortion.curve = makeDistortionCurve(KICK_DISTORTION_AMOUNT);
 
     osc.connect(gainNode);
     gainNode.connect(distortion);

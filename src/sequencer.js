@@ -11,8 +11,11 @@ export class Sequencer {
    * @param {AudioContext} audioCtx
    * @param {number}       bpm       Initial tempo (beats per minute)
    * @param {number}       steps     Number of steps per bar (default 16)
+   * @param {object}       [options] Scheduling tuning options
+   * @param {number}       [options.lookahead=25]       JS timer interval in ms
+   * @param {number}       [options.scheduleAhead=0.1]  Web Audio look-ahead window in seconds
    */
-  constructor(audioCtx, bpm = 135, steps = 16) {
+  constructor(audioCtx, bpm = 135, steps = 16, { lookahead = 25, scheduleAhead = 0.1 } = {}) {
     this.ctx = audioCtx;
     this.bpm = bpm;
     this.steps = steps;
@@ -25,8 +28,8 @@ export class Sequencer {
     this.callbacks = new Map();  // name → Function(time, value, step)
 
     this.isPlaying = false;
-    this.lookahead = 25;         // ms — how often the scheduler fires
-    this.scheduleAhead = 0.1;    // s  — how far ahead to schedule audio
+    this.lookahead = lookahead;             // ms — how often the scheduler fires
+    this.scheduleAhead = scheduleAhead;     // s  — how far ahead to schedule audio
 
     this._timerID = null;
 
