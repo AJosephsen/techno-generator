@@ -22,8 +22,13 @@
       <div class="transport-controls">
         <div class="control-row">
           <label>BPM</label>
-          <input type="range" id="bpm" min="140" max="200" value="174" step="1">
-          <span class="value" id="bpmDisplay">174</span>
+          <input type="range" id="bpm" min="140" max="200" value="151" step="1">
+          <span class="value" id="bpmDisplay">151</span>
+        </div>
+        <div class="control-row">
+          <label>Swing</label>
+          <input type="range" id="swing" min="0" max="0.5" value="0.045" step="0.005">
+          <span class="value" id="swingDisplay">Straight</span>
         </div>
         <div class="transport-copy">
           <strong>Click</strong> a step to toggle · <strong>Right-click</strong> for ghost velocity · pick a preset or draw your own pattern
@@ -48,17 +53,17 @@
         <h2>Kick Voice</h2>
         <div class="control-row">
           <label>Tune</label>
-          <input type="range" id="kickTune" min="25" max="100" value="40" step="1">
+          <input type="range" id="kickTune" min="25" max="100" value="31" step="1">
           <span class="value" id="kickTuneDisplay">55 Hz</span>
         </div>
         <div class="control-row">
           <label>Decay</label>
-          <input type="range" id="kickDecay" min="0.2" max="1.5" value="0.59" step="0.01">
+          <input type="range" id="kickDecay" min="0.2" max="1.5" value="0.46" step="0.01">
           <span class="value" id="kickDecayDisplay">0.65 s</span>
         </div>
         <div class="control-row">
           <label>Punch</label>
-          <input type="range" id="kickPunch" min="1.2" max="6" value="3.55" step="0.05">
+          <input type="range" id="kickPunch" min="1.2" max="6" value="2" step="0.05">
           <span class="value" id="kickPunchDisplay">2.8×</span>
         </div>
         <div class="control-row">

@@ -17,9 +17,9 @@ export class KickDrum {
     this.output = output || audioCtx.destination;
 
     // Voice parameters — tweak externally to reshape the sound
-    this.tune  = 40;   // Hz  — sustained bass tone frequency
-    this.decay = 0.59; // s   — amplitude envelope length
-    this.punch = 3.55; // ×   — start freq = tune × punch  (pitch sweep range)
+    this.tune  = 31;   // Hz  — sustained bass tone frequency
+    this.decay = 0.46; // s   — amplitude envelope length
+    this.punch = 2.0;  // ×   — start freq = tune × punch  (pitch sweep range)
     this.click = 0.6;  // 0–1 — level of the transient click attack
   }
 

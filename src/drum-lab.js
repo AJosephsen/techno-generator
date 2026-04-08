@@ -20,6 +20,7 @@ const TRACKS = [
 
 const PRESETS = {
   'Two-Step': {
+    swing: 0,
     kick:  [1,0,0,0, 0,0,1,0, 0,0,0,0, 0,0,1,0],
     snare: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
     rim:   [0,0,0.4,0, 0,0,0,0.4, 0,0,0.4,0, 0,0,0,0.4],
@@ -28,15 +29,18 @@ const PRESETS = {
     clap:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
   },
   'Amen': {
-    kick:  [1,0,0,0, 0,0,0.75,0, 1,0,0,0, 0,0.75,0,0],
-    snare: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
-    rim:   [0,0,0.4,0, 0,0,0,0, 0,0.4,0,0, 0,0,0.4,0],
-    chh:   [1,1,0,1, 0,1,1,0, 1,1,0,1, 0,1,1,0],
-    ohh:   [0,0,0,0, 0,1,0,0, 0,0,0,0, 0,1,0,0],
+    swing: 0.045,
+    // Key features: kick on 1 + off-beat 3, double kick on 9-10, snare on 5 + 13,
+    // dense open hi-hat pattern, ghost snares for the "crackle". Needs swing ~0.28.
+    kick:  [1,0,0,0, 0,0,0,0, 1,1,0,0, 0,0,1,0],
+    snare: [0,0,0,0, 1,0,0,0.4, 0,0,0.4,0, 1,0,0,0],
+    rim:   [0,0,0.4,0, 0,0.4,0,0, 0,0,0,0.4, 0,0.4,0,0],
+    chh:   [1,0.6,0,0.6, 0,0.6,0,0.6, 0.6,0,0.6,0, 0,0.6,0,0.6],
+    ohh:   [0,0,0.7,0, 0,0,0.7,0, 0,0,0.7,0, 0.8,0,0.7,0],
     clap:  [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
   },
   'Rolling': {
-    kick:  [1,0,1,0, 1,0,1,0, 1,0,1,0, 0,0.75,0,0],
+    swing: 0.04,
     snare: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
     rim:   [0,0,0,0, 0,0,0,0.4, 0,0,0,0, 0,0,0.4,0],
     chh:   [0,1,0,1, 0,1,0,1, 0,1,0,1, 0,1,0,1],
@@ -44,7 +48,7 @@ const PRESETS = {
     clap:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
   },
   'Neurofunk': {
-    kick:  [1,0,0,1, 0,0,0,0, 0,1,0,0, 1,0,0,0],
+    swing: 0,
     snare: [0,0,0,0, 1,0,0,0.75, 0,0,0,0, 1,0,0,0.75],
     rim:   [0,0.4,0,0, 0,0.4,0,0, 0,0.4,0,0, 0,0,0.4,0],
     chh:   [1,1,0,1, 1,0,1,0, 1,1,0,1, 1,0,1,0],
@@ -52,7 +56,7 @@ const PRESETS = {
     clap:  [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
   },
   'Jungle': {
-    kick:  [1,0,0,0, 0,1,0,0, 0,0,0,1, 0,0,1,0],
+    swing: 0.1,  // heavier shuffle — old school ragga jungle feel
     snare: [0,0,0,0, 1,0,0,0.75, 0,0,0,0, 1,0,0,1],
     rim:   [0,0,0.4,0, 0,0,0.4,0, 0,0.4,0,0, 0,0,0.4,0],
     chh:   [1,0,1,1, 0,1,1,0, 1,0,1,1, 0,1,1,0],
@@ -120,6 +124,7 @@ function initAudio() {
   syncKickParams();
 
   sequencer = new Sequencer(audioCtx, bpm);
+  sequencer.setSwing(parseFloat(document.getElementById('swing')?.value ?? 0));
   sequencer.addPattern('kick',  patterns.kick,  (t, v) => kick.trigger(t, v));
   sequencer.addPattern('snare', patterns.snare, (t, v) => snare.trigger(t, v));
   sequencer.addPattern('rim',   patterns.rim,   (t, v) => rim.trigger(t, v));
@@ -337,6 +342,16 @@ function loadPreset(name) {
     }
     if (sequencer) sequencer.setPattern(t.id, patterns[t.id]);
   });
+
+  // Apply preset swing
+  if (preset.swing !== undefined) {
+    const swingSlider = document.getElementById('swing');
+    const swingDisplay = document.getElementById('swingDisplay');
+    if (swingSlider) {
+      swingSlider.value = preset.swing;
+      swingSlider.dispatchEvent(new Event('input'));
+    }
+  }
   // Redraw all step buttons
   TRACKS.forEach(t => {
     for (let s = 0; s < 16; s++) {
@@ -427,6 +442,16 @@ function init() {
   bindSlider('kickDecay', 'kickDecayDisplay', v => `${v.toFixed(2)} s`,   () => syncKickParams());
   bindSlider('kickPunch', 'kickPunchDisplay', v => `${v.toFixed(1)}×`,    () => syncKickParams());
   bindSlider('kickClick', 'kickClickDisplay', v => `${Math.round(v * 100)}%`, () => syncKickParams());
+
+  bindSlider('swing', 'swingDisplay', v => {
+    // 0.1667 = 100% (triplet grid). Beyond that = overdrive territory.
+    const pct = Math.round(v / 0.1667 * 100);
+    if (pct === 0)    return 'Straight';
+    if (pct <= 100)   return `${pct}%`;
+    return `⚡ ${pct}%`;
+  }, v => {
+    if (sequencer) sequencer.setSwing(v);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', init);

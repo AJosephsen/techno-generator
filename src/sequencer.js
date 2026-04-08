@@ -31,6 +31,14 @@ export class Sequencer {
     this.lookahead = lookahead;             // ms — how often the scheduler fires
     this.scheduleAhead = scheduleAhead;     // s  — how far ahead to schedule audio
 
+    /**
+     * Swing amount: 0 = straight, 0.33 = ~55% classic groove, 0.5 = full triplet.
+     * Odd-indexed steps (the "e" and "a" subdivisions) are pushed forward by
+     * swing * stepDuration, which stretches the first subdivision of each pair and
+     * compresses the second — the classic live-drummer swing feel.
+     */
+    this.swing = 0;
+
     this._timerID = null;
 
     /**
@@ -47,6 +55,11 @@ export class Sequencer {
   setBPM(bpm) {
     this.bpm = bpm;
     this.stepDuration = this._calcStepDuration(bpm);
+  }
+
+  /** 0 = straight · 0.167 = 100% triplet · above = overdrive (no clamp intentional) */
+  setSwing(amount) {
+    this.swing = Math.max(0, amount);
   }
 
   /**
@@ -85,7 +98,11 @@ export class Sequencer {
 
   _schedule() {
     while (this.nextNoteTime < this.ctx.currentTime + this.scheduleAhead) {
-      this._triggerStep(this.currentStep, this.nextNoteTime);
+      // Swing: delay odd-indexed steps (the off-beat 16th of each 8th-note pair).
+      // delay = 2 * swing * stepDuration so that swing=0.167 hits the triplet grid
+      // and swing=0 is perfectly straight. Pair total duration is preserved.
+      const swingOffset = (this.currentStep % 2 === 1) ? 2 * this.swing * this.stepDuration : 0;
+      this._triggerStep(this.currentStep, this.nextNoteTime + swingOffset);
       this.nextNoteTime += this.stepDuration;
       this.currentStep = (this.currentStep + 1) % this.steps;
     }
